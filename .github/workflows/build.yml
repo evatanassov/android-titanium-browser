@@ -7,9 +7,8 @@ on:
         description: 'Runner'
         required: true
         type: string
-        default: 'self-hosted' # ubuntu-latest
-  schedule:
-    - cron: '0 0 */16 * *'
+        default: 'ubuntu-latest' # self-hosted
+
 
 permissions:
   contents: write
