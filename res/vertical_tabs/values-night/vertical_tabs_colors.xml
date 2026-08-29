@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 The Titanium Authors
+     Use of this source code is governed by a GPL-2.0-only style license that can be
+     found in the LICENSE file. -->
+
+<resources>
+    <color name="vertical_tabs_scrim">#99000000</color>
+    <color name="vertical_tabs_rail_background">#202124</color>
+    <color name="vertical_tabs_rail_background_dark">#202124</color>
+</resources>

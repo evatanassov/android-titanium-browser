@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 The Titanium Authors
+     Use of this source code is governed by a GPL-2.0-only style license that can be
+     found in the LICENSE file. -->
+
+<resources>
+    <!-- Panel sizing -->
+    <dimen name="vertical_tabs_default_width">280dp</dimen>
+    <dimen name="vertical_tabs_min_width">200dp</dimen>
+    <dimen name="vertical_tabs_max_width">400dp</dimen>
+    <dimen name="vertical_tabs_rail_width">48dp</dimen>
+    <dimen name="vertical_tabs_drawer_width">320dp</dimen>
+    <dimen name="vertical_tabs_drawer_edge_margin">56dp</dimen>
+    <dimen name="vertical_tabs_resize_handle_width">16dp</dimen>
+    <dimen name="vertical_tabs_resize_pill_width">4dp</dimen>
+    <dimen name="vertical_tabs_resize_pill_height">48dp</dimen>
+
+    <!-- Header -->
+    <dimen name="vertical_tabs_header_height">56dp</dimen>
+    <dimen name="vertical_tabs_header_padding_start">12dp</dimen>
+    <dimen name="vertical_tabs_header_padding_end">8dp</dimen>
+
+    <!-- Rows -->
+    <dimen name="vertical_tabs_row_height">44dp</dimen>
+    <dimen name="vertical_tabs_row_margin_horizontal">8dp</dimen>
+    <dimen name="vertical_tabs_row_padding_start">8dp</dimen>
+    <dimen name="vertical_tabs_row_padding_end">4dp</dimen>
+    <dimen name="vertical_tabs_row_corner_radius">22dp</dimen>
+    <dimen name="vertical_tabs_row_indent_step">16dp</dimen>
+    <dimen name="vertical_tabs_favicon_container_size">24dp</dimen>
+    <dimen name="vertical_tabs_favicon_size">20dp</dimen>
+    <dimen name="vertical_tabs_favicon_corner_radius">4dp</dimen>
+
+    <!-- Section headers -->
+    <dimen name="vertical_tabs_section_header_height">36dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="vertical_tabs_drawer_elevation">8dp</dimen>
+    <dimen name="vertical_tabs_docked_elevation">0dp</dimen>
+</resources>

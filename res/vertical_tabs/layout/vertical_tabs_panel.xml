@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 The Titanium Authors
+     Use of this source code is governed by a GPL-2.0-only style license that can be
+     found in the LICENSE file. -->
+
+<!-- Content of VerticalTabsPanelView. Inflated as <merge> into the panel's FrameLayout. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/vertical_tabs_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="?android:attr/colorBackground"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:id="@+id/vertical_tabs_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/vertical_tabs_header_height"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/vertical_tabs_header_padding_start"
+            android:paddingEnd="@dimen/vertical_tabs_header_padding_end">
+
+            <EditText
+                android:id="@+id/vertical_tabs_search"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/vertical_tabs_search_box_bg"
+                android:hint="@string/vertical_tabs_search_tabs"
+                android:importantForAutofill="no"
+                android:imeOptions="actionDone|flagNoExtractUi"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorHint" />
+
+            <ImageButton
+                android:id="@+id/vertical_tabs_incognito_toggle"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/vertical_tabs_show_incognito"
+                android:src="@drawable/ic_vertical_tabs_incognito"
+                android:tint="?attr/colorControlNormal"
+                android:visibility="gone"
+                tools:ignore="UseAppTint" />
+
+            <ImageButton
+                android:id="@+id/vertical_tabs_new_tab"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/vertical_tabs_new_tab"
+                android:src="@drawable/ic_vertical_tabs_plus"
+                android:tint="?attr/colorControlNormal"
+                tools:ignore="UseAppTint" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/vertical_tabs_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="16dp"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+
+    <!-- Resize handle shown in DOCKED mode; gravity is set programmatically. -->
+    <FrameLayout
+        android:id="@+id/vertical_tabs_resize_handle"
+        android:layout_width="@dimen/vertical_tabs_resize_handle_width"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="@dimen/vertical_tabs_resize_pill_width"
+            android:layout_height="@dimen/vertical_tabs_resize_pill_height"
+            android:layout_gravity="center"
+            android:background="@drawable/vertical_tabs_drag_handle" />
+    </FrameLayout>
+</merge>

@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Titanium Browser <titanium-browser@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 00:00:00 +0000
+Subject: [PATCH] Add VerticalTabsAndroid feature flag
+
+Adds the VerticalTabsAndroid base::Feature (enabled by default), exposes it to
+Java via ChromeFeatureList and kFeaturesExposedToJava, and registers permanent
+flag metadata so it can be toggled from chrome://flags.
+---
+diff --git a/chrome/browser/flag-metadata.json b/chrome/browser/flag-metadata.json
+index ce3af16..c02dea2 100644
+--- a/chrome/browser/flag-metadata.json
++++ b/chrome/browser/flag-metadata.json
+@@ -10615,4 +10615,13 @@
+     ],
+     "expiry_milestone": 160
+   }
++,
++  {
++    // Titanium: vertical tabs sidebar (Zen/Arc-style); never expires.
++    "name": "VerticalTabsAndroid",
++    "owners": [
++      "titanium-browser@users.noreply.github.com"
++    ],
++    "expiry_milestone": -1
++  }
+ ]
+diff --git a/chrome/browser/flags/android/chrome_feature_list.cc b/chrome/browser/flags/android/chrome_feature_list.cc
+index 9fafa60..be809dd 100644
+--- a/chrome/browser/flags/android/chrome_feature_list.cc
++++ b/chrome/browser/flags/android/chrome_feature_list.cc
+@@ -494,6 +494,7 @@ const base::Feature* const kFeaturesExposedToJava[] = {
+     &kUseWebUiNtpAndroid,
+     &kUserFeedbackAllowedPolicy,
+     &kVerifyStartupSigninState,
++    &kVerticalTabsAndroid,
+     &kVirtualKeyboardTransientInnerHeightFix,
+     &kWebApkMinShellVersion,
+     &kWebAppShortEdgesCutoutMode,
+@@ -893,6 +894,7 @@ BASE_FEATURE(kUseWebUiNtpAndroid, base::FEATURE_DISABLED_BY_DEFAULT);
+ BASE_FEATURE(kUserFeedbackAllowedPolicy, base::FEATURE_ENABLED_BY_DEFAULT);
+ // Verify sign-in state on startup.
+ BASE_FEATURE(kVerifyStartupSigninState, base::FEATURE_ENABLED_BY_DEFAULT);
++BASE_FEATURE(kVerticalTabsAndroid, base::FEATURE_ENABLED_BY_DEFAULT);
+ BASE_FEATURE(kVirtualKeyboardTransientInnerHeightFix, base::FEATURE_ENABLED_BY_DEFAULT);
+ BASE_FEATURE(kWebAppShortEdgesCutoutMode, base::FEATURE_DISABLED_BY_DEFAULT);
+ // Shows only the remote device name on the Android notification instead of
+diff --git a/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java b/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
+index 3d2da0a..773ca16 100644
+--- a/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
++++ b/chrome/browser/flags/android/java/src/org/chromium/chrome/browser/flags/ChromeFeatureList.java
+@@ -728,6 +728,7 @@ public abstract class ChromeFeatureList {
+     public static final String USE_WEB_UI_NTP_ANDROID = "UseWebUiNtpAndroid";
+     public static final String VERIFY_QWACS = "VerifyQWACs";
+     public static final String VERIFY_STARTUP_SIGNIN_STATE = "VerifyStartupSigninState";
++    public static final String VERTICAL_TABS_ANDROID = "VerticalTabsAndroid";
+     public static final String VIRTUAL_KEYBOARD_TRANSIENT_INNER_HEIGHT_FIX =
+             "VirtualKeyboardTransientInnerHeightFix";
+     public static final String WEB_APK_BACKUP_AND_RESTORE_BACKEND = "WebApkBackupAndRestoreBackend";

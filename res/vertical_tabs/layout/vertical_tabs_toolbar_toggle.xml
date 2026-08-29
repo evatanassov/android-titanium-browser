@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 The Titanium Authors
+     Use of this source code is governed by a GPL-2.0-only style license that can be
+     found in the LICENSE file. -->
+
+<!-- Inflated from the vertical_tabs_toggle_stub ViewStub in the toolbar layouts.
+     Only references local resources and framework theme attributes so it compiles
+     within chrome_app_java_resources without extra resource deps. -->
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="40dp"
+    android:layout_height="match_parent"
+    android:background="?android:attr/selectableItemBackgroundBorderless"
+    android:contentDescription="@string/vertical_tabs_toggle_sidebar"
+    android:src="@drawable/ic_vertical_tabs_sidebar"
+    android:tint="?attr/colorControlNormal" />

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 The Titanium Authors
+     Use of this source code is governed by a GPL-2.0-only style license that can be
+     found in the LICENSE file. -->
+
+<!-- A single tab row in the vertical tabs panel. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vertical_tabs_row"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/vertical_tabs_row_height"
+    android:layout_marginStart="@dimen/vertical_tabs_row_margin_horizontal"
+    android:layout_marginEnd="@dimen/vertical_tabs_row_margin_horizontal"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    android:background="@drawable/vertical_tabs_row_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/vertical_tabs_row_padding_start"
+    android:paddingEnd="@dimen/vertical_tabs_row_padding_end">
+
+    <Space
+        android:id="@+id/vertical_tabs_row_indent"
+        android:layout_width="0dp"
+        android:layout_height="1dp" />
+
+    <FrameLayout
+        android:layout_width="@dimen/vertical_tabs_favicon_container_size"
+        android:layout_height="@dimen/vertical_tabs_favicon_container_size">
+
+        <ImageView
+            android:id="@+id/vertical_tabs_favicon"
+            android:layout_width="@dimen/vertical_tabs_favicon_size"
+            android:layout_height="@dimen/vertical_tabs_favicon_size"
+            android:layout_gravity="center"
+            android:background="@drawable/vertical_tabs_favicon_bg"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/vertical_tabs_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="Tab title" />
+
+    <ImageButton
+        android:id="@+id/vertical_tabs_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/vertical_tabs_close_tab"
+        android:src="@drawable/ic_vertical_tabs_close"
+        android:tint="?attr/colorControlNormal"
+        tools:ignore="UseAppTint" />
+</LinearLayout>

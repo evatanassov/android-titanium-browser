@@ -162,4 +162,35 @@ if (content::WebContents::HasLiveWebContentsForBrowserContext(profile)) { return
 sed -i 's/|| mSupportedProfileType == SupportedProfileType.REGULAR) {/|| mSupportedProfileType == SupportedProfileType.REGULAR || mSupportedProfileType == SupportedProfileType.MIXED) {/' chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 sed -i 's/|| mSupportedProfileType == SupportedProfileType.OFF_THE_RECORD) {/|| mSupportedProfileType == SupportedProfileType.OFF_THE_RECORD || mSupportedProfileType == SupportedProfileType.MIXED) {/' chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 
+# vertical tabs (Zen/Arc-style sidebar)
+VT_JAVA_DST=titanium/chromium_src/chrome/android/java/src/org/chromium/chrome/browser/vertical_tabs
+mkdir -p $VT_JAVA_DST
+cp $SCRIPT_DIR/titanium/chromium_src/chrome/android/java/src/org/chromium/chrome/browser/vertical_tabs/*.java $VT_JAVA_DST/
+for vt_java in $VT_JAVA_DST/*.java; do
+    vt_name=$(basename $vt_java)
+    sed -i "s|chrome_java_ext_rel_path_sources = \[|&\n  \"java/src/org/chromium/chrome/browser/vertical_tabs/$vt_name\",|" \
+        titanium/chromium_src/chrome/android/chrome_java_ext_sources.gni
+done
+
+VT_RES_DST=titanium/chromium_src/chrome/android/java/res_vertical_tabs
+mkdir -p $VT_RES_DST
+cp -r $SCRIPT_DIR/res/vertical_tabs/. $VT_RES_DST/
+find $VT_RES_DST -type f -name '*.xml' | sort | while read -r vt_res; do
+    vt_rel="java/res_vertical_tabs/${vt_res#$VT_RES_DST/}"
+    sed -i "s|chrome_app_java_resources_ext_rel_path_sources = \[|&\n  \"$vt_rel\",|" \
+        titanium/chromium_src/chrome/android/chrome_app_java_resources_ext_sources.gni
+done
+
+# vertical tabs: toolbar toggle stub (same injection pattern as the extensions toolbar)
+for vt_layout in chrome/browser/ui/android/toolbar/java/res/layout/toolbar_phone.xml \
+    chrome/browser/ui/android/toolbar/java/res/layout/toolbar_tablet.xml; do
+    sed -i 's|<org.chromium.chrome.browser.toolbar.top.ToggleTabStackButton|<ViewStub\
+        android:id="@+id/vertical_tabs_toggle_stub"\
+        android:layout="@layout/vertical_tabs_toolbar_toggle"\
+        android:layout_width="wrap_content"\
+        android:layout_height="match_parent" />\
+\
+&|' $vt_layout
+done
+
 export PATCHED=1

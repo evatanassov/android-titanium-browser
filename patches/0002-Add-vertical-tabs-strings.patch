@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Titanium Browser <titanium-browser@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 00:00:00 +0000
+Subject: [PATCH] Add vertical tabs strings
+
+Adds the strings used by the vertical tabs sidebar to
+android_chrome_strings.grd.
+---
+diff --git a/chrome/browser/ui/android/strings/android_chrome_strings.grd b/chrome/browser/ui/android/strings/android_chrome_strings.grd
+index 2bdd243..1fa338e 100644
+--- a/chrome/browser/ui/android/strings/android_chrome_strings.grd
++++ b/chrome/browser/ui/android/strings/android_chrome_strings.grd
+@@ -4457,6 +4457,46 @@ To change this setting, <ph name="BEGIN_LINK">BEGIN_LINK</ph>delete the Titanium
+       <message name="IDS_MENU_NEW_TAB" desc="Menu item for opening a new tab. [CHAR_LIMIT=27]">
+         New tab
+       </message>
++      <!-- Titanium: vertical tabs sidebar -->
++      <message name="IDS_VERTICAL_TABS_TOGGLE_SIDEBAR" desc="Content description and tooltip for the button that shows or hides the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Toggle vertical tabs sidebar
++      </message>
++      <message name="IDS_VERTICAL_TABS_NEW_TAB" desc="Content description for the new tab button in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        New tab
++      </message>
++      <message name="IDS_VERTICAL_TABS_SEARCH_TABS" desc="Placeholder text for the tab search box in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Search tabs
++      </message>
++      <message name="IDS_VERTICAL_TABS_SHOW_INCOGNITO" desc="Content description for the button that switches the vertical tabs sidebar between regular and Incognito tabs. [CHAR_LIMIT=30]">
++        Show Incognito tabs
++      </message>
++      <message name="IDS_VERTICAL_TABS_SECTION_PINNED" desc="Title of the pinned tabs section in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Pinned
++      </message>
++      <message name="IDS_VERTICAL_TABS_SECTION_TABS" desc="Title of the plain tabs section in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Tabs
++      </message>
++      <message name="IDS_VERTICAL_TABS_SECTION_GROUP" desc="Title of a tab group section in the vertical tabs sidebar when the group has no name. [CHAR_LIMIT=30]">
++        Tab group
++      </message>
++      <message name="IDS_VERTICAL_TABS_TAB_ROW_DESCRIPTION" desc="Content description for a tab row in the vertical tabs sidebar. [CHAR_LIMIT=none]">
++        Tab: <ph name="TAB_TITLE">%1$s<ex>Example domain</ex></ph>
++      </message>
++      <message name="IDS_VERTICAL_TABS_CONTEXT_PIN" desc="Context menu item to pin a tab in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Pin tab
++      </message>
++      <message name="IDS_VERTICAL_TABS_CONTEXT_UNPIN" desc="Context menu item to unpin a tab in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Unpin tab
++      </message>
++      <message name="IDS_VERTICAL_TABS_CONTEXT_DUPLICATE" desc="Context menu item to duplicate a tab in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Duplicate tab
++      </message>
++      <message name="IDS_VERTICAL_TABS_CONTEXT_CLOSE_OTHERS" desc="Context menu item to close all tabs except the selected one in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Close other tabs
++      </message>
++      <message name="IDS_VERTICAL_TABS_CONTEXT_CLOSE" desc="Context menu item to close a tab in the vertical tabs sidebar. [CHAR_LIMIT=30]">
++        Close tab
++      </message>
+       <message name="IDS_MENU_NEW_INCOGNITO_TAB" desc="Menu item for opening a new Incognito tab that facilitates pseudononymous browsing. [CHAR_LIMIT=27]" meaning="Android menu">
+         New Incognito tab
+       </message>

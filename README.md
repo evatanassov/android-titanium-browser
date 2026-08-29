@@ -39,6 +39,17 @@ To view and access the debug URLs, use [`chrome://chrome-urls`](chrome://chrome-
 
 The option is available by using the menu button <kbd>⋮</kbd> in the top right corner, then selecting **Settings**, **Privacy and security**. If you experience issues with WebRTC due to IPs being shielded by default (e.g. [Discord Voice](https://discord.com/blog/how-discord-handles-two-and-half-million-concurrent-voice-users-using-webrtc)), try changing it to **Default public interface only**, or **Default**.
 
+### Vertical Tabs Sidebar
+
+A Zen/Arc-style vertical tabs sidebar is available behind the `VerticalTabsAndroid` flag (enabled by default, overridable via [`chrome://flags`](chrome://flags)):
+
+- **DeX / large windows**: a persistent docked sidebar (default 280dp, user-resizable between 200–400dp via the drag handle) that insets the web content and toolbar, with a collapsed 48dp icon rail mode.
+- **Phones**: a slide-over drawer with a scrim, edge-swipe to open, and back-press to close; selecting a tab closes the drawer.
+- **Tab management**: pinned tabs section, tab groups as collapsible sections, tab search/filter, context menu (pin/unpin, duplicate, close others, close), drag to reorder, swipe to close, and a regular/Incognito model toggle.
+- **Entry points**: the toolbar sidebar button, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (toggle), <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>]</kbd> / <kbd>[</kbd> (next/previous tab), and the left-edge swipe on phones.
+
+The sidebar hides while the tab switcher (Hub) is visible and re-appears afterwards. Implementation details and upstream integration points are documented in [`docs/vertical-tabs-recon.md`](docs/vertical-tabs-recon.md).
+
 ## Implementation
 
 > [!WARNING]

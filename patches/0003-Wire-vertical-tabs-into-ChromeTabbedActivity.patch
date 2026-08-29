@@ -1,0 +1,76 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Titanium Browser <titanium-browser@users.noreply.github.com>
+Date: Sat, 29 Aug 2026 00:00:00 +0000
+Subject: [PATCH] Wire vertical tabs into ChromeTabbedActivity
+
+Creates the VerticalTabsCoordinator during finishNativeInitialization when the
+VerticalTabsAndroid feature is enabled, adds keyboard shortcuts (Ctrl+Shift+B
+toggle, Ctrl+Shift+]/[ next/previous tab) and tears the coordinator down on
+destroy.
+---
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
+index 24c7f59..d5b9880 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
+@@ -334,6 +334,8 @@ import org.chromium.chrome.browser.tasks.tab_management.vertical_tabs.VerticalTa
+ import org.chromium.chrome.browser.tips.TipsNotificationsFeatureType;
+ import org.chromium.chrome.browser.toolbar.ToolbarIntentMetadata;
+ import org.chromium.chrome.browser.toolbar.ToolbarManager;
++import org.chromium.chrome.browser.vertical_tabs.VerticalTabsCoordinator;
++import org.chromium.chrome.browser.vertical_tabs.VerticalTabsFeature;
+ import org.chromium.chrome.browser.toolbar.extensions.ExtensionsToolbarCoordinator;
+ import org.chromium.chrome.browser.toolbar.top.ToolbarControlContainer;
+ import org.chromium.chrome.browser.ui.AppLaunchDrawBlocker;
+@@ -685,6 +687,9 @@ public class ChromeTabbedActivity extends ChromeActivity implements PreAttachInt
+     private final TabSwitcherBackPressHandlerManager mDragHandlerManager =
+             new TabSwitcherBackPressHandlerManager();
+ 
++    // Titanium: vertical tabs sidebar (Zen/Arc-style).
++    private VerticalTabsCoordinator mVerticalTabsCoordinator;
++
+     // ID assigned to each ChromeTabbedActivity instance in Android S+ where multi-instance feature
+     // is supported. This can be explicitly set in the incoming Intent or internally assigned.
+     private int mWindowId;
+@@ -1631,6 +1636,17 @@ public class ChromeTabbedActivity extends ChromeActivity implements PreAttachInt
+ 
+             super.finishNativeInitialization();
+ 
++            // Titanium: wire the vertical tabs sidebar.
++            if (VerticalTabsFeature.isEnabled()) {
++                mVerticalTabsCoordinator =
++                        new VerticalTabsCoordinator(
++                                this,
++                                getTabModelSelector(),
++                                mBackPressManager,
++                                getLayoutManager(),
++                                (ViewGroup) findViewById(android.R.id.content));
++            }
++
+             recordFirstAppLaunchTimestampIfNeeded();
+             // TODO(jinsukkim): Let these classes handle the registration by themselves.
+             mCompositorViewHolder = assertNonNull(getCompositorViewHolderSupplier().get());
+@@ -5322,6 +5338,11 @@ public class ChromeTabbedActivity extends ChromeActivity implements PreAttachInt
+             mFindsManager = null;
+         }
+ 
++        if (mVerticalTabsCoordinator != null) {
++            mVerticalTabsCoordinator.destroy();
++            mVerticalTabsCoordinator = null;
++        }
++
+         super.onDestroyInternal();
+     }
+ 
+@@ -5364,6 +5385,12 @@ public class ChromeTabbedActivity extends ChromeActivity implements PreAttachInt
+             }
+         }
+ 
++        // Titanium: vertical tabs keyboard shortcuts.
++        if (mVerticalTabsCoordinator != null
++                && mVerticalTabsCoordinator.handleKeyEvent(event)) {
++            return true;
++        }
++
+         return result != null ? result : super.dispatchKeyEvent(event);
+     }
+ 
