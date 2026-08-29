@@ -162,4 +162,9 @@ if (content::WebContents::HasLiveWebContentsForBrowserContext(profile)) { return
 sed -i 's/|| mSupportedProfileType == SupportedProfileType.REGULAR) {/|| mSupportedProfileType == SupportedProfileType.REGULAR || mSupportedProfileType == SupportedProfileType.MIXED) {/' chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 sed -i 's/|| mSupportedProfileType == SupportedProfileType.OFF_THE_RECORD) {/|| mSupportedProfileType == SupportedProfileType.OFF_THE_RECORD || mSupportedProfileType == SupportedProfileType.MIXED) {/' chrome/android/java/src/org/chromium/chrome/browser/ChromeTabbedActivity.java
 
+# vertical tabs layout
+sed -i 's|new GridLayoutManager(context, spanCount)|new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)|g' chrome/android/java/src/org/chromium/chrome/browser/tasks/tab_management/TabListCoordinator.java
+sed -i 's|int tabStripHeight = getTabStripHeight();|int tabStripHeight = 0;|g' chrome/browser/ui/android/toolbar/java/src/org/chromium/chrome/browser/toolbar/top/TabStripTransitionCoordinator.java
+
 export PATCHED=1
+
