@@ -66,14 +66,18 @@ jobs:
           sudo chown -R "$USER":"$USER" /mnt/build
           mkdir -p chromium/src
           sudo mount --bind /mnt/build/chromium_src chromium/src
-          # Extra swap so linking survives with 16 GB RAM
+          # Extra swap so linking survives with 16 GB RAM. Runner images
+          # already ship an active /swapfile, so use a unique name.
           FREE_ROOT_GB=$(df --output=avail -BG / | tail -n1 | tr -dc '0-9')
-          if [ "$FREE_ROOT_GB" -ge 25 ]; then SWAPFILE=/swapfile; else SWAPFILE=/mnt/build/swapfile; fi
-          sudo fallocate -l 12G "$SWAPFILE" 2>/dev/null || \
-            sudo dd if=/dev/zero of="$SWAPFILE" bs=1M count=12288 status=none
-          sudo chmod 600 "$SWAPFILE"
-          sudo mkswap "$SWAPFILE"
-          sudo swapon "$SWAPFILE"
+          if [ "$FREE_ROOT_GB" -ge 25 ]; then SWAPFILE=/swapfile-ci; else SWAPFILE=/mnt/build/swapfile; fi
+          if ! swapon --show=NAME --noheadings 2>/dev/null | grep -qx "$SWAPFILE"; then
+            sudo fallocate -l 12G "$SWAPFILE" 2>/dev/null || \
+              sudo dd if=/dev/zero of="$SWAPFILE" bs=1M count=12288 status=none
+            sudo chmod 600 "$SWAPFILE"
+            sudo mkswap "$SWAPFILE"
+            sudo swapon "$SWAPFILE" || echo "::warning::Could not enable extra swap"
+          fi
+          swapon --show
           df -h / /mnt
           free -h
 
