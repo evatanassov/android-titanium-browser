@@ -2,12 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-    inputs:
-      runner:
-        description: 'Runner'
-        required: true
-        type: string
-        default: 'self-hosted' # ubuntu-latest
   schedule:
     - cron: '0 0 */16 * *'
 
@@ -16,15 +10,20 @@ permissions:
   id-token: write
   attestations: write
 
+concurrency:
+  group: build
+  cancel-in-progress: false
+
 jobs:
-  build:
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runner || 'self-hosted' }}
+  update:
+    name: Update vanadium submodule
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: true
-      
-      - name: Update 
+
+      - name: Update
         run: |
           cd vanadium
           git fetch --tags
@@ -34,30 +33,102 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           if ! git diff --staged --quiet; then
-            git commit -am "update"
+            git commit -m "update"
             git push
           fi
 
-      - name: Set ENV
-        run: | 
-          chmod +x *.sh
-          echo "unix_time=$(date +%s)" >> $GITHUB_ENV
-    
-      - name: Build
-        env:
-            DEBIAN_FRONTEND: noninteractive
-            LOCAL_TEST_JKS: ${{ secrets.LOCAL_TEST_JKS }}
-            STORE_TEST_JKS: ${{ secrets.STORE_TEST_JKS }}
-        run: |
-          ./build.sh
+  build:
+    name: Build (${{ matrix.abi }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        abi: [arm, arm64]
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
 
-      - name: Set
+      - name: Maximize disk space
         run: |
-          export VERSION=$(find chromium/src/out/release -name '*arm64-v8a.apk' | sed 's/.*\///;s/\-arm64-v8a.apk$//')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          mv $(find chromium/src/out/release -name '*arm64-v8a.aab') $VERSION-${{ env.unix_time }}-arm64-v8a.aab
-          mv $(find chromium/src/out/release -name '*arm64-v8a.apk') $VERSION-${{ env.unix_time }}-arm64-v8a.apk
-          mv $(find chromium/src/out/release -name '*armeabi-v7a.apk') $VERSION-${{ env.unix_time }}-armeabi-v7a.apk
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /usr/local/.ghcup \
+            /opt/ghc /opt/hostedtoolcache/CodeQL /usr/share/swift \
+            /usr/local/share/boost /usr/lib/jvm /usr/share/miniconda /opt/az
+          sudo docker image prune -af >/dev/null 2>&1 || true
+          df -h /
+
+      - name: Prepare build disk and swap
+        run: |
+          # Put the Chromium tree on the runner's secondary disk via bind mount,
+          # keeping the gclient root (and its ../vanadium hook paths) intact.
+          sudo mkdir -p /mnt/build/chromium_src
+          sudo chown -R "$USER":"$USER" /mnt/build
+          mkdir -p chromium/src
+          sudo mount --bind /mnt/build/chromium_src chromium/src
+          # Extra swap so linking survives with 16 GB RAM
+          FREE_ROOT_GB=$(df --output=avail -BG / | tail -n1 | tr -dc '0-9')
+          if [ "$FREE_ROOT_GB" -ge 25 ]; then SWAPFILE=/swapfile; else SWAPFILE=/mnt/build/swapfile; fi
+          sudo fallocate -l 12G "$SWAPFILE" 2>/dev/null || \
+            sudo dd if=/dev/zero of="$SWAPFILE" bs=1M count=12288 status=none
+          sudo chmod 600 "$SWAPFILE"
+          sudo mkswap "$SWAPFILE"
+          sudo swapon "$SWAPFILE"
+          df -h / /mnt
+          free -h
+
+      - name: Set ENV
+        run: |
+          chmod +x *.sh
+
+      - name: Checkout latest Vanadium tag
+        run: |
+          cd vanadium
+          git fetch --tags
+          git checkout $(git tag | sort -V | tail -n1)
+
+      - name: Build ${{ matrix.abi }}
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          TARGET_CPU: ${{ matrix.abi }}
+          LOCAL_TEST_JKS: ${{ secrets.LOCAL_TEST_JKS }}
+          STORE_TEST_JKS: ${{ secrets.STORE_TEST_JKS }}
+        run: ./build.sh
+
+      - name: Collect outputs
+        run: |
+          mkdir -p outputs
+          cp chromium/src/out/release/* outputs/
+          df -h / /mnt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: apks-${{ matrix.abi }}
+          path: outputs/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: dist
+
+      - name: Rename outputs
+        run: |
+          cd dist
+          VERSION=$(ls *arm64-v8a.apk | head -n1 | sed 's/-arm64-v8a\.apk$//')
+          TS=$(date +%s)
+          for f in ${VERSION}-*; do
+            mv "$f" "${VERSION}-${TS}-${f#${VERSION}-}"
+          done
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "TS=$TS" >> "$GITHUB_ENV"
+          ls -la
 
       - name: Publish
         uses: softprops/action-gh-release@v2
@@ -66,14 +137,14 @@ jobs:
           name: v${{ env.VERSION }}
           tag_name: v${{ env.VERSION }}
           files: |
-            ${{ env.VERSION }}-${{ env.unix_time }}-arm64-v8a.aab
-            ${{ env.VERSION }}-${{ env.unix_time }}-arm64-v8a.apk
-            ${{ env.VERSION }}-${{ env.unix_time }}-armeabi-v7a.apk
+            ${{ env.VERSION }}-${{ env.TS }}-arm64-v8a.aab
+            ${{ env.VERSION }}-${{ env.TS }}-arm64-v8a.apk
+            ${{ env.VERSION }}-${{ env.TS }}-armeabi-v7a.apk
 
       - name: Attest
         uses: actions/attest-build-provenance@v4
         with:
           subject-path: |
-            ${{ env.VERSION }}-${{ env.unix_time }}-arm64-v8a.aab
-            ${{ env.VERSION }}-${{ env.unix_time }}-arm64-v8a.apk
-            ${{ env.VERSION }}-${{ env.unix_time }}-armeabi-v7a.apk
+            ${{ env.VERSION }}-${{ env.TS }}-arm64-v8a.aab
+            ${{ env.VERSION }}-${{ env.TS }}-arm64-v8a.apk
+            ${{ env.VERSION }}-${{ env.TS }}-armeabi-v7a.apk
